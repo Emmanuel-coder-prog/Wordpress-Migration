@@ -1,0 +1,22 @@
+# Default ownership
+* @Emmanuel-coder-prog
+
+# Infrastructure and deployments
+/.github/ @Emmanuel-coder-prog
+/docker/ @Emmanuel-coder-prog
+/infrastructure/ @Emmanuel-coder-prog
+/compose*.yml @Emmanuel-coder-prog
+/environments/production/ @Emmanuel-coder-prog
+
+# Database and migration safety
+/scripts/migration/ @Emmanuel-coder-prog
+/scripts/backup/ @Emmanuel-coder-prog
+/scripts/restore/ @Emmanuel-coder-prog
+
+# WooCommerce
+/apps/store-gh/ @Emmanuel-coder-prog
+/dependencies/store-gh-public.lock @Emmanuel-coder-prog
+
+# Security policy
+/docker/nginx/common/ @Emmanuel-coder-prog
+/infrastructure/cloudflare/ @Emmanuel-coder-prog
