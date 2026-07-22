@@ -206,7 +206,7 @@ jobs:
       - name: Verify PHP modules and WordPress
         shell: bash
         run: |
-          set -Eeuo pipefail
+          set -Eeuxo pipefail
 
           image="cetech-${{ matrix.site }}-php:ci-${GITHUB_SHA}"
 
@@ -215,6 +215,9 @@ jobs:
             "${image}" \
             -m \
             > /tmp/php-modules.txt
+
+          echo "==== Installed PHP Modules ===="
+          cat /tmp/php-modules.txt
 
           for module in \
             bcmath \
@@ -231,15 +234,19 @@ jobs:
             sockets \
             zip
           do
-            grep -qi "^${module}$" /tmp/php-modules.txt
+              echo "Checking module: ${module}"
+              if grep -qi "^${module}$" /tmp/php-modules.txt; then
+                  echo "PASS: ${module}"
+              else
+                  echo "FAIL: ${module} is missing"
+                  exit 1
+              fi
           done
 
           docker run --rm \
-            --entrypoint wp \
+            --entrypoint sh \
             "${image}" \
-            core verify-checksums \
-            --path=/usr/src/wordpress \
-            --version="${WORDPRESS_VERSION}"
+            -c "echo \"==== WP CLI VERSION ====\"; wp --info; echo \"==== WordPress files ====\"; ls -la /usr/src/wordpress; wp core verify-checksums --path=/usr/src/wordpress --version=\"${WORDPRESS_VERSION}\" --debug"
 
       - name: Verify production image excludes development tools
         shell: bash
