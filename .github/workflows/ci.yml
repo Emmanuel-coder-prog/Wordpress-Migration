@@ -127,7 +127,7 @@ jobs:
                 -print0 \
                 | xargs -0 -n1 php -l
 
-              vendor/bin/phpcs
+              php -d memory_limit=512M vendor/bin/phpcs --standard=WordPress --extensions=php --ignore=*/vendor/* apps docker scripts
             '
 
       - name: Generate temporary Compose environment
