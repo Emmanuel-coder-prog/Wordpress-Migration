@@ -17,23 +17,10 @@ ENV DEBIAN_FRONTEND=noninteractive \
     WORDPRESS_VERSION=${WORDPRESS_VERSION} \
     WP_CLI_ALLOW_ROOT=1 \
     PATH="/usr/local/bin:${PATH}" \
-    WORDPRESS_DB_NAME=wordpress \
-    WORDPRESS_DB_USER=wordpress \
-    WORDPRESS_DB_PASSWORD=wordpress \
-    WORDPRESS_DB_HOST=mariadb:3306 \
-    WORDPRESS_AUTH_KEY=build-auth-key \
-    WORDPRESS_SECURE_AUTH_KEY=build-secure-auth-key \
-    WORDPRESS_LOGGED_IN_KEY=build-logged-in-key \
-    WORDPRESS_NONCE_KEY=build-nonce-key \
-    WORDPRESS_AUTH_SALT=build-auth-salt \
-    WORDPRESS_SECURE_AUTH_SALT=build-secure-auth-salt \
-    WORDPRESS_LOGGED_IN_SALT=build-logged-in-salt \
-    WORDPRESS_NONCE_SALT=build-nonce-salt \
     WORDPRESS_HOME=http://localhost \
     WORDPRESS_SITEURL=http://localhost \
     WORDPRESS_VALKEY_HOST=127.0.0.1 \
     WORDPRESS_VALKEY_PORT=6379 \
-    WORDPRESS_VALKEY_PASSWORD=build-valkey-password \
     WORDPRESS_VALKEY_PREFIX=build: \
     WORDPRESS_CACHE_KEY_SALT=build-cache-key-salt
 
@@ -156,6 +143,8 @@ RUN set -eux; \
     chown -R www-data:www-data /opt/cetech/wp-content
 
 WORKDIR /var/www/html
+
+USER www-data
 
 EXPOSE 9000
 
