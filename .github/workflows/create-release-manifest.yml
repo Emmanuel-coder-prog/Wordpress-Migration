@@ -36,7 +36,9 @@ jobs:
 
           gh run download "${RUN_ID}" \
             --dir downloaded-release-records \
-            --pattern "release-*-${HEAD_SHA}"
+            -n "release-cetech-corporate-php-${HEAD_SHA}" \
+            -n "release-cetech-store-gh-php-${HEAD_SHA}" \
+            -n "release-cetech-blog-en-php-${HEAD_SHA}"
 
       - name: Assemble manifest
         shell: bash
