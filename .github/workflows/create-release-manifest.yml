@@ -34,11 +34,18 @@ jobs:
 
           mkdir -p downloaded-release-records
 
-          gh run download "${RUN_ID}" \
-            --dir downloaded-release-records \
-            -n "release-cetech-corporate-php-${HEAD_SHA}" \
-            -n "release-cetech-store-gh-php-${HEAD_SHA}" \
-            -n "release-cetech-blog-en-php-${HEAD_SHA}"
+          expected_artifacts=(
+            "release-cetech-corporate-php-${HEAD_SHA}"
+            "release-cetech-store-gh-php-${HEAD_SHA}"
+            "release-cetech-blog-en-php-${HEAD_SHA}"
+          )
+
+          for artifact in "${expected_artifacts[@]}"; do
+            echo "Downloading artifact: ${artifact}"
+            gh run download "${RUN_ID}" \
+              --dir downloaded-release-records \
+              -n "${artifact}"
+          done
 
       - name: Assemble manifest
         shell: bash
