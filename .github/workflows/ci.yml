@@ -63,6 +63,7 @@ jobs:
             'BEGIN (OPENSSH |RSA |EC )?PRIVATE KEY|AKIA[0-9A-Z]{16}|MARIADB_ROOT_PASSWORD=[^[:space:]]+|AUTH_KEY=[^[:space:]]{30,}' \
             -- \
             ':!*.example' \
+            ':(exclude).github/workflows/*.yml' \
             ':(exclude)scripts/local/generate-*.sh'
           then
             echo "Potential secret material detected."
@@ -279,6 +280,9 @@ jobs:
 
           docker run --rm \
             --volume "${PWD}/docker/nginx:/mnt/nginx:ro" \
+            --add-host corporate-nginx:127.0.0.1 \
+            --add-host store-nginx:127.0.0.1 \
+            --add-host blog-nginx:127.0.0.1 \
             nginx:1.30.4 \
             sh -c 'mkdir -p /etc/nginx/snippets && cp /mnt/nginx/nginx.conf /etc/nginx/nginx.conf && cp /mnt/nginx/front-door/default.conf /etc/nginx/conf.d/default.conf && cp -R /mnt/nginx/common /etc/nginx/snippets && nginx -t'
 
