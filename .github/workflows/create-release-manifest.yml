@@ -27,14 +27,25 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_ID: ${{ github.event.workflow_run.id }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
         shell: bash
         run: |
           set -Eeuo pipefail
 
           mkdir -p downloaded-release-records
 
-          gh run download "${RUN_ID}" \
-            --dir downloaded-release-records
+          expected_artifacts=(
+            "release-cetech-corporate-php-${HEAD_SHA}"
+            "release-cetech-store-gh-php-${HEAD_SHA}"
+            "release-cetech-blog-en-php-${HEAD_SHA}"
+          )
+
+          for artifact in "${expected_artifacts[@]}"; do
+            echo "Downloading artifact: ${artifact}"
+            gh run download "${RUN_ID}" \
+              --dir downloaded-release-records \
+              -n "${artifact}"
+          done
 
       - name: Assemble manifest
         shell: bash
