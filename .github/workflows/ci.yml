@@ -98,14 +98,18 @@ jobs:
         run: |
           set -Eeuo pipefail
 
-          docker run --rm \
-            --volume "${PWD}:/app" \
-            --workdir /app \
-            composer:2.8.10 \
-            composer install \
-              --no-interaction \
-              --prefer-dist \
-              --no-progress
+          if [[ -f composer.json ]]; then
+            docker run --rm \
+              --volume "${PWD}:/app" \
+              --workdir /app \
+              composer:2.8.10 \
+              composer install \
+                --no-interaction \
+                --prefer-dist \
+                --no-progress
+          else
+            echo "composer.json not present, skipping Composer install"
+          fi
 
       - name: PHP syntax and coding standards
         shell: bash
@@ -284,7 +288,7 @@ jobs:
             --add-host store-nginx:127.0.0.1 \
             --add-host blog-nginx:127.0.0.1 \
             nginx:1.30.4 \
-            sh -c 'mkdir -p /etc/nginx/snippets && cp /mnt/nginx/nginx.conf /etc/nginx/nginx.conf && cp /mnt/nginx/front-door/default.conf /etc/nginx/conf.d/default.conf && cp -R /mnt/nginx/common /etc/nginx/snippets && nginx -t'
+            sh -c 'mkdir -p /etc/nginx/snippets && cp /mnt/nginx/nginx.conf /etc/nginx/nginx.conf && cp /mnt/nginx/front-door/default.conf /etc/nginx/conf.d/default.conf && cp -R /mnt/nginx/common/. /etc/nginx/snippets && nginx -t'
 
       - name: Validate site Nginx configurations
         shell: bash
@@ -298,7 +302,7 @@ jobs:
               --add-host store-php:127.0.0.1 \
               --add-host blog-php:127.0.0.1 \
               nginx:1.30.4 \
-              sh -c "mkdir -p /etc/nginx/snippets && cp /mnt/nginx/nginx.conf /etc/nginx/nginx.conf && cp /mnt/nginx/${site}/default.conf /etc/nginx/conf.d/default.conf && cp -R /mnt/nginx/common /etc/nginx/snippets && nginx -t"
+              sh -c "mkdir -p /etc/nginx/snippets && cp /mnt/nginx/nginx.conf /etc/nginx/nginx.conf && cp /mnt/nginx/${site}/default.conf /etc/nginx/conf.d/default.conf && cp -R /mnt/nginx/common/. /etc/nginx/snippets && nginx -t"
           done
 
   secret-and-vulnerability-scan:

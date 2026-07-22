@@ -21,8 +21,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     WORDPRESS_SITEURL=http://localhost \
     WORDPRESS_VALKEY_HOST=127.0.0.1 \
     WORDPRESS_VALKEY_PORT=6379 \
-    WORDPRESS_VALKEY_PREFIX=build: \
-    WORDPRESS_CACHE_KEY_SALT=build-cache-key-salt
+    WORDPRESS_VALKEY_PREFIX=build:
 
 RUN set -eux; \
     apt-get update; \
