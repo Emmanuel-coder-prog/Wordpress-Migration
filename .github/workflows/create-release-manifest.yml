@@ -27,6 +27,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_ID: ${{ github.event.workflow_run.id }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -34,7 +35,8 @@ jobs:
           mkdir -p downloaded-release-records
 
           gh run download "${RUN_ID}" \
-            --dir downloaded-release-records
+            --dir downloaded-release-records \
+            --pattern "release-*-${HEAD_SHA}"
 
       - name: Assemble manifest
         shell: bash
