@@ -14,7 +14,7 @@
 /scripts/restore/ @Emmanuel-coder-prog
 
 # WooCommerce
-/apps/store-gh/ @Emmanuel-coder-prog
+/apps/store-gh/ @Emmanuel-coder-prog 
 /dependencies/store-gh-public.lock @Emmanuel-coder-prog
 
 # Security policy
