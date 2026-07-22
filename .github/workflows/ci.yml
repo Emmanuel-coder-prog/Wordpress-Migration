@@ -235,7 +235,14 @@ jobs:
             zip
           do
               echo "Checking module: ${module}"
-              if grep -qi "^${module}$" /tmp/php-modules.txt; then
+              if [ "${module}" = "opcache" ]; then
+                  if grep -Eqi '^(opcache|Zend OPcache)$' /tmp/php-modules.txt; then
+                      echo "PASS: ${module}"
+                  else
+                      echo "FAIL: ${module} is missing"
+                      exit 1
+                  fi
+              elif grep -qi "^${module}$" /tmp/php-modules.txt; then
                   echo "PASS: ${module}"
               else
                   echo "FAIL: ${module} is missing"
