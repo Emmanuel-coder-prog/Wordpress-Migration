@@ -41,14 +41,17 @@ jobs:
             "release-cetech-store-gh-nginx-${HEAD_SHA}"
             "release-cetech-blog-en-php-${HEAD_SHA}"
             "release-cetech-blog-en-nginx-${HEAD_SHA}"
-            "release-cetech-front-door-nginx-${HEAD_SHA}"
           )
 
           for artifact in "${expected_artifacts[@]}"; do
             echo "Downloading artifact: ${artifact}"
-            gh run download "${RUN_ID}" \
+            if gh run download "${RUN_ID}" \
               --dir downloaded-release-records \
-              -n "${artifact}"
+              -n "${artifact}"; then
+              :
+            else
+              echo "Artifact not found, skipping: ${artifact}"
+            fi
           done
 
       - name: Assemble manifest
@@ -70,7 +73,7 @@ jobs:
             printf '[]\n' > release-manifest.json
           fi
 
-          jq -e 'length == 7' release-manifest.json
+          jq -e 'length == 6' release-manifest.json
 
       - name: Upload manifest
         uses: actions/upload-artifact@v5
