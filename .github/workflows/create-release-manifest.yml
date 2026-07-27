@@ -36,8 +36,12 @@ jobs:
 
           expected_artifacts=(
             "release-cetech-corporate-php-${HEAD_SHA}"
+            "release-cetech-corporate-nginx-${HEAD_SHA}"
             "release-cetech-store-gh-php-${HEAD_SHA}"
+            "release-cetech-store-gh-nginx-${HEAD_SHA}"
             "release-cetech-blog-en-php-${HEAD_SHA}"
+            "release-cetech-blog-en-nginx-${HEAD_SHA}"
+            "release-cetech-front-door-nginx-${HEAD_SHA}"
           )
 
           for artifact in "${expected_artifacts[@]}"; do
@@ -60,7 +64,7 @@ jobs:
             | xargs -0 jq -s \
             > release-manifest.json
 
-          jq -e 'length == 3' release-manifest.json
+          jq -e 'length == 7' release-manifest.json
 
       - name: Upload manifest
         uses: actions/upload-artifact@v5
