@@ -36,8 +36,12 @@ jobs:
 
           expected_artifacts=(
             "release-cetech-corporate-php-${HEAD_SHA}"
+            "release-cetech-corporate-nginx-${HEAD_SHA}"
             "release-cetech-store-gh-php-${HEAD_SHA}"
+            "release-cetech-store-gh-nginx-${HEAD_SHA}"
             "release-cetech-blog-en-php-${HEAD_SHA}"
+            "release-cetech-blog-en-nginx-${HEAD_SHA}"
+            "release-cetech-front-door-nginx-${HEAD_SHA}"
           )
 
           for artifact in "${expected_artifacts[@]}"; do
@@ -52,15 +56,21 @@ jobs:
         run: |
           set -Eeuo pipefail
 
-          find downloaded-release-records \
-            -type f \
-            -name '*.json' \
-            -print0 \
-            | sort -z \
-            | xargs -0 jq -s \
-            > release-manifest.json
+          mapfile -d '' -t manifest_files < <(
+            find downloaded-release-records \
+              -type f \
+              -name '*.json' \
+              -print0 \
+              | sort -z
+          )
 
-          jq -e 'length == 3' release-manifest.json
+          if (( ${#manifest_files[@]} > 0 )); then
+            jq -s . "${manifest_files[@]}" > release-manifest.json
+          else
+            printf '[]\n' > release-manifest.json
+          fi
+
+          jq -e 'length == 7' release-manifest.json
 
       - name: Upload manifest
         uses: actions/upload-artifact@v5
