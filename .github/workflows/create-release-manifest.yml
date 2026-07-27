@@ -61,7 +61,7 @@ jobs:
             -name '*.json' \
             -print0 \
             | sort -z \
-            | xargs -0 jq -s \
+            | xargs -0 jq -s . \
             > release-manifest.json
 
           jq -e 'length == 7' release-manifest.json
