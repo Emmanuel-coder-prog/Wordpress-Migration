@@ -143,6 +143,12 @@ services:
         PHPREDIS_VERSION: ${PHPREDIS_VERSION}
         APP_DIR: apps/corporate
         APP_SLUG: corporate
+        APP_PREFIX: ""
+        PHP_PROFILE: local
+        FPM_MAX_CHILDREN: "16"
+        FPM_START_SERVERS: "4"
+        FPM_MIN_SPARE_SERVERS: "2"
+        FPM_MAX_SPARE_SERVERS: "6"
         INSTALL_DEV_TOOLS: "1"
     environment:
       WP_ROOT: /var/www/html
@@ -272,6 +278,12 @@ services:
         PHPREDIS_VERSION: ${PHPREDIS_VERSION}
         APP_DIR: apps/store-gh
         APP_SLUG: store-gh
+        APP_PREFIX: /gh
+        PHP_PROFILE: local
+        FPM_MAX_CHILDREN: "16"
+        FPM_START_SERVERS: "4"
+        FPM_MIN_SPARE_SERVERS: "2"
+        FPM_MAX_SPARE_SERVERS: "6"
         INSTALL_DEV_TOOLS: "1"
     environment:
       WP_ROOT: /var/www/html/gh
@@ -401,6 +413,12 @@ services:
         PHPREDIS_VERSION: ${PHPREDIS_VERSION}
         APP_DIR: apps/blog-en
         APP_SLUG: blog-en
+        APP_PREFIX: /en
+        PHP_PROFILE: local
+        FPM_MAX_CHILDREN: "16"
+        FPM_START_SERVERS: "4"
+        FPM_MIN_SPARE_SERVERS: "2"
+        FPM_MAX_SPARE_SERVERS: "6"
         INSTALL_DEV_TOOLS: "1"
     environment:
       WP_ROOT: /var/www/html/en

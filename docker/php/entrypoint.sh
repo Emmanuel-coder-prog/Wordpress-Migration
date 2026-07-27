@@ -1,18 +1,33 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
+if [[ "${CETECH_IMMUTABLE_RELEASE:-0}" == "1" ]]; then
+  : "${WP_ROOT:?WP_ROOT is required}"
+
+  if [[ ! -f "${WP_ROOT}/wp-settings.php" ]]; then
+    echo "Immutable WordPress release is missing wp-settings.php" >&2
+    exit 1
+  fi
+
+  if [[ ! -f "${WP_ROOT}/wp-config.php" ]]; then
+    echo "Immutable WordPress release is missing wp-config.php" >&2
+    exit 1
+  fi
+
+  exec "$@"
+fi
+
 : "${WP_ROOT:?WP_ROOT is required}"
 
 if [[ "${WP_ROOT}" != /var/www/html* ]]; then
-  echo "Unsafe WP_ROOT: ${WP_ROOT}" >&2
+  echo "Unsafe local WP_ROOT: ${WP_ROOT}" >&2
   exit 1
 fi
 
 mkdir -p "${WP_ROOT}"
 
 if [[ ! -f "${WP_ROOT}/wp-settings.php" ]]; then
-  echo "Initializing WordPress ${WORDPRESS_VERSION} in ${WP_ROOT}"
-
+  echo "Initializing local WordPress in ${WP_ROOT}"
   rsync -a \
     --delete \
     --exclude='wp-content/' \
@@ -47,12 +62,5 @@ chown -R www-data:www-data \
   "${WP_ROOT}/wp-content/uploads" \
   "${WP_ROOT}/wp-content/cache" \
   "${WP_ROOT}/wp-content/upgrade"
-
-find "${WP_ROOT}/wp-content/uploads" -type d -exec chmod 0755 {} +
-find "${WP_ROOT}/wp-content/uploads" -type f -exec chmod 0644 {} +
-
-if [[ "${1:-}" == "php-fpm" ]]; then
-  exec "$@"
-fi
 
 exec "$@"
