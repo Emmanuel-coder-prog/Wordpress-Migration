@@ -259,7 +259,7 @@ jobs:
           platforms: linux/amd64
           tags: ${{ steps.tags.outputs.list }}
           build-args: |
-            PHP_RELEASE_IMAGE=ghcr.io/${{ steps.owner.outputs.value }}/${{ matrix.php_image }}@${{ steps.php-build.outputs.digest }}
+            PHP_RELEASE_IMAGE=ghcr.io/${{ steps.owner.outputs.value }}/${{ matrix.php_image }}:sha-${{ github.sha }}
             SITE_CONFIG=${{ matrix.site_config }}
           provenance: mode=max
           sbom: true

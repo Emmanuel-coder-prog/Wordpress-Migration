@@ -3,7 +3,8 @@ name: cetech-production-${NODE_ID}
 x-logging: &logging
   driver: local
   options:
-    max-size: 20m
+    max-size: 10m
+    max-file: "3"
 
 x-security: &security
   security_opt:
@@ -20,9 +21,9 @@ x-php-common: &php-common
   stop_signal: SIGQUIT
   stop_grace_period: 60s
   tmpfs:
-    - /tmp:size=512m,mode=1777,uid=33,gid=33
-    - /var/tmp:size=256m,mode=1777,uid=33,gid=33
-    - /var/run/php:size=32m,mode=0755,uid=33,gid=33
+    - /tmp:size=128m,mode=1777,uid=33,gid=33
+    - /var/tmp:size=64m,mode=1777,uid=33,gid=33
+    - /var/run/php:size=16m,mode=0755,uid=33,gid=33
   extra_hosts:
     - "db-01.prod.cetech.internal:10.40.30.10"
     - "cache-01.prod.cetech.internal:10.40.40.10"
@@ -38,7 +39,7 @@ x-nginx-common: &nginx-common
   stop_signal: SIGQUIT
   stop_grace_period: 30s
   tmpfs:
-    - /tmp:size=256m,mode=1777,uid=101,gid=101
+    - /tmp:size=64m,mode=1777,uid=101,gid=101
   logging: *logging
   <<: *security
 
@@ -80,12 +81,12 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1.00"
-          memory: 768M
-          pids: 128
-        reservations:
-          cpus: "0.10"
+          cpus: "0.30"
           memory: 128M
+          pids: 64
+        reservations:
+          cpus: "0.05"
+          memory: 32M
 
   corporate-nginx:
     <<: *nginx-common
@@ -102,12 +103,12 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.75"
-          memory: 384M
-          pids: 96
-        reservations:
-          cpus: "0.10"
+          cpus: "0.20"
           memory: 64M
+          pids: 64
+        reservations:
+          cpus: "0.02"
+          memory: 16M
 
   corporate-php:
     <<: *php-common
@@ -135,16 +136,16 @@ services:
       WORDPRESS_DISALLOW_FILE_MODS: "true"
       WORDPRESS_DISABLE_AUTO_UPDATES: "true"
       WORDPRESS_AUTO_UPDATE_CORE: "false"
-      WORDPRESS_MEMORY_LIMIT: 256M
-      WORDPRESS_MAX_MEMORY_LIMIT: 512M
+      WORDPRESS_MEMORY_LIMIT: 128M
+      WORDPRESS_MAX_MEMORY_LIMIT: 256M
       WORDPRESS_VALKEY_HOST: cache-01.prod.cetech.internal
       WORDPRESS_VALKEY_PORT: "6379"
       WORDPRESS_VALKEY_SCHEME: tcp
       WORDPRESS_VALKEY_DATABASE: "0"
       WORDPRESS_VALKEY_USERNAME: ${CORPORATE_VALKEY_USERNAME}
       WORDPRESS_VALKEY_PASSWORD: ${CORPORATE_VALKEY_PASSWORD}
-      WORDPRESS_VALKEY_PREFIX: cetech:production:corporate:
-      WORDPRESS_CACHE_KEY_SALT: cetech:production:corporate:
+      WORDPRESS_VALKEY_PREFIX: "cetech:production:corporate:"
+      WORDPRESS_CACHE_KEY_SALT: "cetech:production:corporate:"
       WORDPRESS_AUTH_KEY: ${CORPORATE_AUTH_KEY}
       WORDPRESS_SECURE_AUTH_KEY: ${CORPORATE_SECURE_AUTH_KEY}
       WORDPRESS_LOGGED_IN_KEY: ${CORPORATE_LOGGED_IN_KEY}
@@ -160,12 +161,12 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "2.00"
-          memory: 4G
-          pids: 256
+          cpus: "0.60"
+          memory: 320M
+          pids: 128
         reservations:
-          cpus: "0.50"
-          memory: 768M
+          cpus: "0.10"
+          memory: 128M
 
   store-nginx:
     <<: *nginx-common
@@ -182,12 +183,12 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1.00"
-          memory: 512M
-          pids: 128
-        reservations:
           cpus: "0.20"
-          memory: 96M
+          memory: 64M
+          pids: 64
+        reservations:
+          cpus: "0.02"
+          memory: 16M
 
   store-php:
     <<: *php-common
@@ -215,16 +216,16 @@ services:
       WORDPRESS_DISALLOW_FILE_MODS: "true"
       WORDPRESS_DISABLE_AUTO_UPDATES: "true"
       WORDPRESS_AUTO_UPDATE_CORE: "false"
-      WORDPRESS_MEMORY_LIMIT: 512M
-      WORDPRESS_MAX_MEMORY_LIMIT: 768M
+      WORDPRESS_MEMORY_LIMIT: 256M
+      WORDPRESS_MAX_MEMORY_LIMIT: 384M
       WORDPRESS_VALKEY_HOST: cache-01.prod.cetech.internal
       WORDPRESS_VALKEY_PORT: "6380"
       WORDPRESS_VALKEY_SCHEME: tcp
       WORDPRESS_VALKEY_DATABASE: "0"
       WORDPRESS_VALKEY_USERNAME: ${STORE_VALKEY_USERNAME}
       WORDPRESS_VALKEY_PASSWORD: ${STORE_VALKEY_PASSWORD}
-      WORDPRESS_VALKEY_PREFIX: cetech:production:store-gh:
-      WORDPRESS_CACHE_KEY_SALT: cetech:production:store-gh:
+      WORDPRESS_VALKEY_PREFIX: "cetech:production:store-gh:"
+      WORDPRESS_CACHE_KEY_SALT: "cetech:production:store-gh:"
       WORDPRESS_AUTH_KEY: ${STORE_AUTH_KEY}
       WORDPRESS_SECURE_AUTH_KEY: ${STORE_SECURE_AUTH_KEY}
       WORDPRESS_LOGGED_IN_KEY: ${STORE_LOGGED_IN_KEY}
@@ -240,12 +241,12 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "4.00"
-          memory: 12G
-          pids: 512
+          cpus: "0.70"
+          memory: 384M
+          pids: 160
         reservations:
-          cpus: "1.00"
-          memory: 2G
+          cpus: "0.15"
+          memory: 160M
 
   blog-nginx:
     <<: *nginx-common
@@ -262,12 +263,12 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.75"
-          memory: 384M
-          pids: 96
-        reservations:
-          cpus: "0.10"
+          cpus: "0.20"
           memory: 64M
+          pids: 64
+        reservations:
+          cpus: "0.02"
+          memory: 16M
 
   blog-php:
     <<: *php-common
@@ -295,16 +296,16 @@ services:
       WORDPRESS_DISALLOW_FILE_MODS: "true"
       WORDPRESS_DISABLE_AUTO_UPDATES: "true"
       WORDPRESS_AUTO_UPDATE_CORE: "false"
-      WORDPRESS_MEMORY_LIMIT: 256M
-      WORDPRESS_MAX_MEMORY_LIMIT: 512M
+      WORDPRESS_MEMORY_LIMIT: 128M
+      WORDPRESS_MAX_MEMORY_LIMIT: 256M
       WORDPRESS_VALKEY_HOST: cache-01.prod.cetech.internal
       WORDPRESS_VALKEY_PORT: "6381"
       WORDPRESS_VALKEY_SCHEME: tcp
       WORDPRESS_VALKEY_DATABASE: "0"
       WORDPRESS_VALKEY_USERNAME: ${BLOG_VALKEY_USERNAME}
       WORDPRESS_VALKEY_PASSWORD: ${BLOG_VALKEY_PASSWORD}
-      WORDPRESS_VALKEY_PREFIX: cetech:production:blog-en:
-      WORDPRESS_CACHE_KEY_SALT: cetech:production:blog-en:
+      WORDPRESS_VALKEY_PREFIX: "cetech:production:blog-en:"
+      WORDPRESS_CACHE_KEY_SALT: "cetech:production:blog-en:"
       WORDPRESS_AUTH_KEY: ${BLOG_AUTH_KEY}
       WORDPRESS_SECURE_AUTH_KEY: ${BLOG_SECURE_AUTH_KEY}
       WORDPRESS_LOGGED_IN_KEY: ${BLOG_LOGGED_IN_KEY}
@@ -320,12 +321,12 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "2.00"
-          memory: 4G
-          pids: 256
-        reservations:
           cpus: "0.50"
-          memory: 768M
+          memory: 256M
+          pids: 128
+        reservations:
+          cpus: "0.08"
+          memory: 96M
 
 networks:
   dokploy-network:
