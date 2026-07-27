@@ -56,13 +56,19 @@ jobs:
         run: |
           set -Eeuo pipefail
 
-          find downloaded-release-records \
-            -type f \
-            -name '*.json' \
-            -print0 \
-            | sort -z \
-            | xargs -0 jq -s . \
-            > release-manifest.json
+          mapfile -d '' -t manifest_files < <(
+            find downloaded-release-records \
+              -type f \
+              -name '*.json' \
+              -print0 \
+              | sort -z
+          )
+
+          if (( ${#manifest_files[@]} > 0 )); then
+            jq -s . "${manifest_files[@]}" > release-manifest.json
+          else
+            printf '[]\n' > release-manifest.json
+          fi
 
           jq -e 'length == 7' release-manifest.json
 
